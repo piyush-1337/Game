@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="borderPane" prefHeight="617.0" prefWidth="831.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.piyush.game.controllers.game.GameController">
+    <!-- Top: Static Label -->
+    <top>
+        <Label fx:id="label" prefHeight="18.0" prefWidth="854.0" text="Scribble" BorderPane.alignment="CENTER" />
+    </top>
+
+    <!-- Left: Fixed-width ListView -->
+    <left>
+        <ListView fx:id="listView" prefWidth="200.0" BorderPane.alignment="CENTER" />
+    </left>
+
+    <!-- Bottom: Flexible HBox with resizable TextField -->
+    <bottom>
+        <HBox fx:id="hBox" BorderPane.alignment="CENTER" >
+            <children>
+                <TextField fx:id="textField" HBox.hgrow="ALWAYS" />
+                <Button fx:id="sendButton" mnemonicParsing="false" text="Send" />
+                <Button fx:id="clearButton" mnemonicParsing="false" text="Clear" />
+          </children>
+        </HBox>
+    </bottom>
+
+    <!-- Right: Fixed-width ScrollPane -->
+    <right>
+        <ScrollPane fx:id="scrollPane" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <content>
+                <VBox fx:id="vBox" />
+            </content>
+        </ScrollPane>
+    </right>
+
+    <!-- Center: Canvas that will resize dynamically -->
+    <center>
+        <Canvas fx:id="canvas" height="300.0" width="400.0" BorderPane.alignment="CENTER" />
+    </center>
+</BorderPane>

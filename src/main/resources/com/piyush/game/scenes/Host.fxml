@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.piyush.game.controllers.server.HostController"
+      spacing="20" alignment="CENTER"
+      style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #34e89e, #0f3443); -fx-padding: 30;">
+
+    <!-- Label for the clients list -->
+    <Label text="Connected Clients:" style="-fx-text-fill: white; -fx-font-size: 18px;"/>
+
+    <!-- ListView to display connected clients -->
+    <ListView fx:id="clientsListView" style="-fx-pref-width: 300px; -fx-pref-height: 200px;"/>
+
+    <!-- Start Game button -->
+    <Button text="Start Game" fx:id="startGameButton" onAction="#startGame"
+            style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #4a90e2, #9013fe); -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 20 10 20; -fx-background-radius: 5;"/>
+</VBox>

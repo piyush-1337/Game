@@ -1,0 +1,81 @@
+/* CSS file for the game UI */
+
+/* Overall background for the main pane */
+#borderPane {
+    -fx-background-color: linear-gradient(to bottom, #2c3e50, #bdc3c7);
+}
+
+/* Top Label styling */
+#label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 10px;
+    -fx-alignment: center;
+}
+
+/* Left ListView styling */
+#listView {
+    -fx-background-color: #ecf0f1;
+    -fx-border-color: #95a5a6;
+}
+
+/* Bottom HBox container styling */
+#hBox {
+    -fx-background-color: #34495e;
+    -fx-padding: 10px;
+}
+
+/* TextField styling */
+#textField {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 14px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 5px;
+}
+
+/* Send Button styling */
+#sendButton {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+#clearButton {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+#sendButton:hover {
+    -fx-background-color: #c0392b;
+}
+
+/* Right ScrollPane styling */
+#scrollPane {
+    -fx-background: #ecf0f1;
+    -fx-border-color: #95a5a6;
+}
+
+/* VBox inside the ScrollPane */
+#vBox {
+    -fx-padding: 10px;
+}
+
+/* Canvas styling */
+/* Note: Canvas styling via CSS is limited, so consider handling canvas drawing in code */
+#canvas {
+    -fx-background-color: #ffffff;
+}

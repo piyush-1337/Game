@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="20" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #4a90e2, #9013fe); -fx-padding: 30;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.piyush.game.controllers.LoginController">
+   <!-- Username input area -->
+   <HBox alignment="CENTER_LEFT" spacing="10">
+      <Label style="-fx-text-fill: white; -fx-font-size: 14px;" text="Enter username:" />
+      <TextField fx:id="username" promptText="Your name" style="-fx-font-size: 14px; -fx-pref-width: 200px; -fx-background-radius: 5; -fx-border-radius: 5;" />
+   </HBox>
+
+   <!-- Radio buttons grouped together -->
+   <HBox alignment="CENTER" spacing="20">
+      <RadioButton fx:id="hostRadioButton" style="-fx-text-fill: white; -fx-font-size: 14px;" text="Host">
+         <toggleGroup>
+            <ToggleGroup fx:id="roleToggleGroup" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="joinRadioButton" selected="true" style="-fx-text-fill: white; -fx-font-size: 14px;" text="Join" toggleGroup="$roleToggleGroup" />
+   </HBox>
+
+   <!-- Proceed button -->
+   <Button fx:id="proceedButton" onAction="#proceed" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #34e89e, #0f3443); -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 20 10 20; -fx-background-radius: 5;" text="Proceed" />
+</VBox>
