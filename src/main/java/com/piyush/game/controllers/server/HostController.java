@@ -55,6 +55,8 @@ public class HostController implements Initializable {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/piyush/game/scenes/Scribble.fxml"));
         Parent root = loader.load();
         GameController gameController = loader.getController();
+        serverNetwork.setGameController(gameController);
+        serverNetwork.startGame();
         gameController.setServerNetwork(serverNetwork);
         gameController.setiAmServer(true);
 

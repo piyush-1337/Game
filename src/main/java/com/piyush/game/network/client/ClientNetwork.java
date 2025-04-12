@@ -64,15 +64,15 @@ public class ClientNetwork {
         out.println(username);
     }
 
-    public void sendMessageToServer(String message) {
-        try {
-            PrintWriter out = new PrintWriter(server.getSocket().getOutputStream(), true);
-            out.println(message);
-            out.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    public void sendMessageToServer(String message) {
+//        try {
+//            PrintWriter out = new PrintWriter(server.getSocket().getOutputStream(), true);
+//            out.println(message);
+//            out.close();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     public void setGamePort(int gamePort) {
         this.gamePort = gamePort;

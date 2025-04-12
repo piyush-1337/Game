@@ -1,8 +1,12 @@
 package com.piyush.game.controllers.game;
 
+import com.piyush.game.GameTools.Player;
 import com.piyush.game.drawing.DrawingTools;
+import com.piyush.game.drawing.WordBank;
 import com.piyush.game.network.client.ClientNetwork;
 import com.piyush.game.network.server.ServerNetwork;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -57,12 +61,15 @@ public class GameController implements Initializable {
 
     private boolean iAmServer = false;
 
+    private final ObservableList<Player> scoreList = FXCollections.observableArrayList();
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        scoreList.addAll();
+
         drawingTools = new DrawingTools(canvas);
-
-
+        wordToGuess = WordBank.getRandomWord();
         /* **********************************CANVAS CODE************************************************** */
         // Bind Canvas width to available horizontal space
         canvas.widthProperty().bind(
@@ -99,7 +106,6 @@ public class GameController implements Initializable {
         /* *********************************************************************************************** */
 
         /* **********************************MESSAGE CODE************************************************* */
-        Stage stage = (Stage) sendButton.getScene().getWindow();
 
         //automatically scrolls the scrollpane when there are more messages than scrollpane height
         vBox.heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -163,4 +169,11 @@ public class GameController implements Initializable {
         this.iAmServer = iAmServer;
     }
 
+    public String getWordToGuess() {
+        return wordToGuess;
+    }
+
+    public void setWordToGuess(String wordToGuess) {
+        this.wordToGuess = wordToGuess;
+    }
 }

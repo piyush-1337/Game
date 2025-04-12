@@ -1,7 +1,7 @@
 module com.piyush.game {
     requires javafx.controls;
     requires javafx.fxml;
-    requires java.desktop;
+    requires com.fasterxml.jackson.databind;
 
 
     opens com.piyush.game to javafx.fxml;

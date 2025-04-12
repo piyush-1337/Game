@@ -1,6 +1,12 @@
 package com.piyush.game.network.server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.piyush.game.GameTools.GameCommand;
+import com.piyush.game.GameTools.Player;
+import com.piyush.game.controllers.game.GameController;
+import com.piyush.game.logic.GameManager;
 import com.piyush.game.network.client.Client;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,8 +16,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServerNetwork {
 
@@ -21,8 +27,13 @@ public class ServerNetwork {
     private boolean running = true;
     private String playerName;
     private boolean gameOver = false;
+    private GameManager gameManager;
+    private ObjectMapper mapper = new ObjectMapper();
+    private GameController gameController;
 
     private final ObservableList<Client> clientsList = FXCollections.observableArrayList();
+
+    List<Player> players = new ArrayList<>();
 
     public void startBroadCast(String username) {
         playerName = username;
@@ -115,36 +126,90 @@ public class ServerNetwork {
         }
     }
 
+    public void sendToAllExcept(GameCommand command, Player excludedPlayer) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        for (Client client : clientsList) {
+            try {
+                // Find the player corresponding to this client
+                Player target = getPlayerBySocket(client.getSocket());
+
+                // Skip the excluded player
+                if (target == null || target.equals(excludedPlayer)) continue;
+
+                // Send the command
+                PrintWriter out = new PrintWriter(client.getSocket().getOutputStream(), true);
+                String json = mapper.writeValueAsString(command);
+                out.println(json);
+
+            } catch (IOException e) {
+                System.err.println("Error sending to client " + client.getUsername() + ": " + e.getMessage());
+            }
+        }
+
+        // Also check if the excluded player is not the server, and if host is playing, update local UI
+        if (!excludedPlayer.isServer()) {
+            // Optionally update GameController locally (if needed)
+        }
+    }
+
+
     public void receiveMessageFromAll() {
-
+        for (Client client : clientsList) {
             new Thread(() -> {
+                try {
+                    BufferedReader in = new BufferedReader(
+                            new InputStreamReader(client.getSocket().getInputStream())
+                    );
 
-                ExecutorService executor = Executors.newFixedThreadPool(clientsList.size());
+                    String json;
+                    while ((json = in.readLine()) != null && !gameOver) {
 
-                while (!gameOver) {
-                    for (Client client : clientsList) {
+                        GameCommand cmd = mapper.readValue(json,GameCommand.class);
+                        gameManager.handleCommand(cmd,getPlayerBySocket(client.getSocket()));
 
-                        executor.execute(() -> {
-
-                            try {
-                                //TODO: Use JSON or something this wont work; too complicated
-                                BufferedReader in = new BufferedReader(new InputStreamReader(client.getSocket().getInputStream()));
-                                String message = in.readLine();
-                                sendMessageToAll(message);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
+                        // Handle the message: deserialize JSON, pass to GameManager, etc.
+                        System.out.println("Received from " + client.getUsername() + ": " + json);
+                        sendMessageToAll(json); // Or better: GameManager.handleCommand(...)
                     }
 
+                } catch (IOException e) {
+                    System.err.println("Client disconnected: " + client.getUsername());
                 }
-
             }).start();
-
+        }
     }
+
+    public void startGame() {
+        for (Client client : clientsList) {
+            players.add(new Player(client.getUsername(), false,client.getSocket())); // false = not server
+        }
+        players.add(new Player("Host", true, null)); // true = server player
+
+        gameManager = new GameManager(players, this, gameController);
+        gameManager.beginGame();
+    }
+
+    public Player getPlayerBySocket(Socket socket) {
+        for (Player player : players) {
+            if (!player.isServer() && player.getSocket().equals(socket)) {
+                return player;
+            }
+        }
+        return null;
+    }
+
 
     public ObservableList<Client> getDiscoveredClients() {
         return clientsList;
+    }
+
+    public void setGameManager(GameManager gameManager) {
+        this.gameManager = gameManager;
+    }
+
+    public void setGameController(GameController gameController) {
+        this.gameController = gameController;
     }
 
     public void stopBroadCast() {

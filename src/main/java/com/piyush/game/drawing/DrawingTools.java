@@ -13,18 +13,18 @@ public class DrawingTools {
 
     public double lastX;
     public double lastY;
-    public final List<DrawCommand> drawHistory = new ArrayList<>();
+    public final List<Draw> drawHistory = new ArrayList<>();
 
     public DrawingTools(Canvas canvas) {
         this.canvas = canvas;
     }
 
-    public interface DrawCommand {
+    public interface Draw {
         void execute(GraphicsContext gc);
     }
 
     // Example line command implementation
-    public record LineCommand(double x1, double y1, double x2, double y2) implements DrawCommand {
+    public record LineCommand(double x1, double y1, double x2, double y2) implements Draw {
         @Override
         public void execute(GraphicsContext gc) {
             gc.strokeLine(x1, y1, x2, y2);
@@ -42,9 +42,10 @@ public class DrawingTools {
         gc.fillRect(0, 0, width, height);
 
         // Redraw any existing drawing commands if needed
-        for (DrawCommand command : drawHistory) {
+        for (Draw command : drawHistory) {
             command.execute(gc);
         }
+
     }
 
     public void clearCanvas() {
