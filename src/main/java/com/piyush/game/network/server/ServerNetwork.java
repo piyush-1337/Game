@@ -1,5 +1,6 @@
 package com.piyush.game.network.server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.piyush.game.GameTools.GameCommand;
 import com.piyush.game.GameTools.Player;
@@ -28,12 +29,12 @@ public class ServerNetwork {
     private String playerName;
     private boolean gameOver = false;
     private GameManager gameManager;
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
     private GameController gameController;
 
     private final ObservableList<Client> clientsList = FXCollections.observableArrayList();
 
-    List<Player> players = new ArrayList<>();
+    ObservableList<Player> players = FXCollections.observableArrayList();
 
     public void startBroadCast(String username) {
         playerName = username;
@@ -112,14 +113,19 @@ public class ServerNetwork {
         }).start();
     }
 
-    public void sendMessageToAll(String message) {
-        String broadcastMsg = playerName + "-" + message;
+    public void sendToAll(GameCommand cmd) {
+        ObjectMapper mapper = new ObjectMapper();
+        String json;
+        try {
+            json = mapper.writeValueAsString(cmd);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         for (Client client : clientsList) {
             try {
                 PrintWriter out = new PrintWriter(client.getSocket().getOutputStream(), true);
-                out.println(broadcastMsg);
-                out.close();
+                out.println(json);
             } catch (IOException e) {
                 throw new RuntimeException();
             }
@@ -153,7 +159,6 @@ public class ServerNetwork {
         }
     }
 
-
     public void receiveMessageFromAll() {
         for (Client client : clientsList) {
             new Thread(() -> {
@@ -170,7 +175,6 @@ public class ServerNetwork {
 
                         // Handle the message: deserialize JSON, pass to GameManager, etc.
                         System.out.println("Received from " + client.getUsername() + ": " + json);
-                        sendMessageToAll(json); // Or better: GameManager.handleCommand(...)
                     }
 
                 } catch (IOException e) {
@@ -181,13 +185,13 @@ public class ServerNetwork {
     }
 
     public void startGame() {
+        players.add(new Player("Host", true, null)); // true = server player
         for (Client client : clientsList) {
             players.add(new Player(client.getUsername(), false,client.getSocket())); // false = not server
         }
-        players.add(new Player("Host", true, null)); // true = server player
 
         gameManager = new GameManager(players, this, gameController);
-        gameManager.beginGame();
+        gameManager.beginGame(gameController.getTimerLabel());
     }
 
     public Player getPlayerBySocket(Socket socket) {
@@ -199,13 +203,12 @@ public class ServerNetwork {
         return null;
     }
 
-
     public ObservableList<Client> getDiscoveredClients() {
         return clientsList;
     }
 
-    public void setGameManager(GameManager gameManager) {
-        this.gameManager = gameManager;
+    public GameManager getGameManager() {
+        return gameManager;
     }
 
     public void setGameController(GameController gameController) {
@@ -229,6 +232,14 @@ public class ServerNetwork {
 
     public void stopGame() {
         gameOver = true;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public ObservableList<Player> getPlayersList() {
+        return players;
     }
 
 }

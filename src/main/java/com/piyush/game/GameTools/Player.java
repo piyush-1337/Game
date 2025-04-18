@@ -1,8 +1,11 @@
 package com.piyush.game.GameTools;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.net.Socket;
 import java.util.Objects;
 
+@JsonIgnoreProperties("socket")
 public class Player {
 
     private String playerName;
@@ -11,10 +14,13 @@ public class Player {
     private int score;
     private boolean isDrawing;
 
+    public Player() {}
+
     public Player(String playerName, boolean isServer, Socket socket) {
         this.playerName = playerName;
         this.isServer = isServer;
         this.socket = socket;
+        this.score = 0;
     }
 
     public String getPlayerName() {

@@ -1,6 +1,9 @@
 package com.piyush.game.controllers.game;
 
+import com.piyush.game.GameTools.GuessCommand;
 import com.piyush.game.GameTools.Player;
+import com.piyush.game.GameTools.UpdateScoreCommand;
+import com.piyush.game.GameTools.WordToGuessCommand;
 import com.piyush.game.drawing.DrawingTools;
 import com.piyush.game.drawing.WordBank;
 import com.piyush.game.network.client.ClientNetwork;
@@ -48,6 +51,8 @@ public class GameController implements Initializable {
     private HBox hBox;
     @FXML
     private TextField textField;
+    @FXML
+    private Label timerLabel;
 
     private DrawingTools drawingTools;
 
@@ -61,15 +66,14 @@ public class GameController implements Initializable {
 
     private boolean iAmServer = false;
 
-    private final ObservableList<Player> scoreList = FXCollections.observableArrayList();
+    private ObservableList<Player> scoreList = FXCollections.observableArrayList();
+
+    private String playerName;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        scoreList.addAll();
-
         drawingTools = new DrawingTools(canvas);
-        wordToGuess = WordBank.getRandomWord();
         /* **********************************CANVAS CODE************************************************** */
         // Bind Canvas width to available horizontal space
         canvas.widthProperty().bind(
@@ -118,43 +122,92 @@ public class GameController implements Initializable {
 
         /* **********************************ADDITIONAL CODE********************************************** */
         clearButton.setOnAction(e -> {drawingTools.clearCanvas();});
+
+        if(!iAmServer){
+            timerLabel.setText("Waiting for server...");
+        }
     }
 
     public void sendMessage() {
 
         if(!textField.getText().isBlank()) {
 
-            String message = textField.getText();
+            String word = textField.getText().trim();
 
-            if(message.equals(wordToGuess)) {
+            if(word.equalsIgnoreCase(wordToGuess)) {
                 //TODO: correctly guessed the word add points
+
+
+
             }
+
             else {
                 //send the message to the chat box
-                HBox hBox = new HBox();
-                hBox.setAlignment(Pos.CENTER_LEFT);
-                hBox.setPadding(new Insets(5,5,5,10));
-
-                Text text = new Text(message);
-                text.setFill(Color.BLACK);
-                text.setFont(Font.font("Segoe UI", FontWeight.NORMAL, 14));
-                text.setSmooth(false);
-
-                TextFlow textFlow = new TextFlow(text);
-                textFlow.setStyle("-fx-color: rgb(239,242,255);" +
-                        "-fx-background-color: rgb(15,125,242);" +
-                        "-fx-background-radius: 20px;");
-                textFlow.setPadding(new Insets(5,10,5,10));
-                text.setFill(Color.color(0.934,0.945,0.996));
-
-                hBox.getChildren().add(textFlow);
-                vBox.getChildren().add(hBox);
+                String message = playerName + " - " + word;
+                addChat(message);
+                GuessCommand command = new GuessCommand();
+                command.guessedWord = WordBank.getRandomWord();
+                command.playerName = iAmServer ? serverNetwork.getPlayerName() : clientNetwork.getPlayerName();
 
                 if(iAmServer) {
-                    serverNetwork.sendMessageToAll(message);
+                    serverNetwork.sendToAll(command);
+                } else {
+                    clientNetwork.sendCommandToServer(command);
                 }
-            }
+            } //Still needs to update things
         }
+    }
+
+    public void addChat(String message) {
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER_LEFT);
+        hBox.setPadding(new Insets(5,5,5,10));
+
+        Text text = new Text(message);
+        text.setFill(Color.BLACK);
+        text.setFont(Font.font("Segoe UI", FontWeight.NORMAL, 14));
+        text.setSmooth(false);
+
+        TextFlow textFlow = new TextFlow(text);
+        textFlow.setStyle("-fx-color: rgb(239,242,255);" +
+                "-fx-background-color: rgb(15,125,242);" +
+                "-fx-background-radius: 20px;");
+        textFlow.setPadding(new Insets(5,10,5,10));
+        text.setFill(Color.color(0.934,0.945,0.996));
+
+        hBox.getChildren().add(textFlow);
+        vBox.getChildren().add(hBox);
+    }
+
+    public void enableDrawing() {
+        canvas.setOnMousePressed(e -> {
+            drawing = true;
+            drawingTools.lastX = e.getX();
+            drawingTools.lastY = e.getY();
+        });
+
+        canvas.setOnMouseDragged(e -> {
+            if (drawing) {
+                drawingTools.drawHistory.add(new DrawingTools.LineCommand(drawingTools.lastX, drawingTools.lastY, e.getX(), e.getY()));
+                drawingTools.lastX = e.getX();
+                drawingTools.lastY = e.getY();
+                drawingTools.redraw();
+            }
+        });
+    }
+
+    public void disableDrawing() {
+        canvas.setOnMousePressed(null);
+        canvas.setOnMouseDragged(null);
+    }
+
+    public void setLabelText(String text) {
+        label.setText(text);
+    }
+
+    public void processDrawCommand(DrawingTools.LineCommand line) {
+        drawingTools.drawHistory.add(line);
+        drawingTools.redraw();
     }
 
     public void setServerNetwork(ServerNetwork serverNetwork) {
@@ -163,6 +216,7 @@ public class GameController implements Initializable {
 
     public void setClientNetwork(ClientNetwork clientNetwork) {
         this.clientNetwork = clientNetwork;
+        clientNetwork.setGameController(this);
     }
 
     public void setiAmServer(boolean iAmServer) {
@@ -175,5 +229,25 @@ public class GameController implements Initializable {
 
     public void setWordToGuess(String wordToGuess) {
         this.wordToGuess = wordToGuess;
+    }
+
+    public DrawingTools getDrawingTools() {
+        return drawingTools;
+    }
+
+    public Label getTimerLabel() {
+        return timerLabel;
+    }
+
+    public Stage getStage() {
+        return (Stage) sendButton.getScene().getWindow();
+    }
+
+    public void setScoreList(ObservableList<Player> players){
+        this.scoreList = players;
+    }
+
+    public void setPlayerName(String name){
+        this.playerName = name;
     }
 }

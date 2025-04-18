@@ -13,7 +13,10 @@
 <BorderPane fx:id="borderPane" prefHeight="617.0" prefWidth="831.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.piyush.game.controllers.game.GameController">
     <!-- Top: Static Label -->
     <top>
-        <Label fx:id="label" prefHeight="18.0" prefWidth="854.0" text="Scribble" BorderPane.alignment="CENTER" />
+        <HBox>
+            <Label fx:id="label" prefHeight="18.0" prefWidth="854.0" text="Scribble" BorderPane.alignment="CENTER_LEFT" />
+            <Label fx:id="timerLabel" prefHeight="18.0" prefWidth="854.0" text="Timer" BorderPane.alignment="CENTER_RIGHT" />
+        </HBox>
     </top>
 
     <!-- Left: Fixed-width ListView -->
@@ -23,7 +26,7 @@
 
     <!-- Bottom: Flexible HBox with resizable TextField -->
     <bottom>
-        <HBox fx:id="hBox" BorderPane.alignment="CENTER" >
+        <HBox fx:id="hBox" BorderPane.alignment="CENTER">
             <children>
                 <TextField fx:id="textField" HBox.hgrow="ALWAYS" />
                 <Button fx:id="sendButton" mnemonicParsing="false" text="Send" />

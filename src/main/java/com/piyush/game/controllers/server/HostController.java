@@ -59,6 +59,7 @@ public class HostController implements Initializable {
         serverNetwork.startGame();
         gameController.setServerNetwork(serverNetwork);
         gameController.setiAmServer(true);
+        gameController.setPlayerName(serverNetwork.getPlayerName());
 
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/com/piyush/game/styles/ScribbleStyles.css").toExternalForm());

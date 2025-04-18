@@ -44,15 +44,20 @@ public class JoinController implements Initializable {
 
     public void joinServer() {
         int index = serversListView.getSelectionModel().getSelectedIndex();
+        String serverName = clientNetwork.getDiscoveredServers().get(index).getUsername();
 
         try {
-            clientNetwork.setServer(index, username);
+            clientNetwork.setServer(index, serverName);
+            clientNetwork.setPlayerName(username);
+            clientNetwork.stopListeningToBroadcast();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/piyush/game/scenes/Scribble.fxml"));
             Parent root = loader.load();
             GameController gameController = loader.getController();
             gameController.setiAmServer(false);
+            clientNetwork.startListeningFromServer();
             gameController.setClientNetwork(clientNetwork);
+            gameController.setPlayerName(username);
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/com/piyush/game/styles/ScribbleStyles.css").toExternalForm());
