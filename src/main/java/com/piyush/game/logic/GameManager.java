@@ -79,6 +79,7 @@ public class GameManager {
         playerListCommand.players = playersList;
 
         gameController.setWordToGuess(wordToGuess);
+        gameController.enableDrawing();
 
         WordToGuessCommand wordToGuessCommand = new WordToGuessCommand();
         wordToGuessCommand.correctWord = wordToGuess;

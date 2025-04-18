@@ -1,13 +1,11 @@
 package com.piyush.game.controllers.game;
 
-import com.piyush.game.GameTools.GuessCommand;
-import com.piyush.game.GameTools.Player;
-import com.piyush.game.GameTools.UpdateScoreCommand;
-import com.piyush.game.GameTools.WordToGuessCommand;
+import com.piyush.game.GameTools.*;
 import com.piyush.game.drawing.DrawingTools;
 import com.piyush.game.drawing.WordBank;
 import com.piyush.game.network.client.ClientNetwork;
 import com.piyush.game.network.server.ServerNetwork;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -93,24 +91,9 @@ public class GameController implements Initializable {
         canvas.heightProperty().addListener((obs, oldVal, newVal) -> drawingTools.redraw());
         drawingTools.redraw();
 
-        canvas.setOnMousePressed(e -> {
-            drawing = true;
-            drawingTools.lastX = e.getX();
-            drawingTools.lastY = e.getY();
-        });
-
-        canvas.setOnMouseDragged(e -> {
-            if (drawing) {
-                drawingTools.drawHistory.add(new DrawingTools.LineCommand(drawingTools.lastX, drawingTools.lastY, e.getX(), e.getY()));
-                drawingTools.lastX = e.getX();
-                drawingTools.lastY = e.getY();
-                drawingTools.redraw();
-            }
-        });
         /* *********************************************************************************************** */
 
         /* **********************************MESSAGE CODE************************************************* */
-
         //automatically scrolls the scrollpane when there are more messages than scrollpane height
         vBox.heightProperty().addListener((observable, oldValue, newValue) -> {
             scrollPane.setVvalue(newValue.doubleValue());
@@ -175,8 +158,10 @@ public class GameController implements Initializable {
         textFlow.setPadding(new Insets(5,10,5,10));
         text.setFill(Color.color(0.934,0.945,0.996));
 
-        hBox.getChildren().add(textFlow);
-        vBox.getChildren().add(hBox);
+        Platform.runLater(() -> {
+            hBox.getChildren().add(textFlow);
+            vBox.getChildren().add(hBox);
+        });
     }
 
     public void enableDrawing() {
@@ -188,21 +173,32 @@ public class GameController implements Initializable {
 
         canvas.setOnMouseDragged(e -> {
             if (drawing) {
+
+                DrawCommand drawCommand = new DrawCommand();
+                drawCommand.startX = drawingTools.lastX;
+                drawCommand.startY = drawingTools.lastY;
+                drawCommand.endX = e.getX();
+                drawCommand.endY = e.getY();
+                serverNetwork.sendToAll(drawCommand);
+
                 drawingTools.drawHistory.add(new DrawingTools.LineCommand(drawingTools.lastX, drawingTools.lastY, e.getX(), e.getY()));
                 drawingTools.lastX = e.getX();
                 drawingTools.lastY = e.getY();
                 drawingTools.redraw();
             }
         });
+
+        canvas.setOnMouseReleased(e -> drawing = false);
     }
 
     public void disableDrawing() {
         canvas.setOnMousePressed(null);
         canvas.setOnMouseDragged(null);
+        canvas.setOnMouseReleased(null);
     }
 
     public void setLabelText(String text) {
-        label.setText(text);
+        Platform.runLater(() -> label.setText(text));
     }
 
     public void processDrawCommand(DrawingTools.LineCommand line) {
