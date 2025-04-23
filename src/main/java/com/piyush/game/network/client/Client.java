@@ -29,8 +29,6 @@ public class Client {
         this.username = username;
     }
 
-    // Override equals() to consider two Client objects equal if they have the same username
-    // and come from the same remote socket address.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -45,13 +43,11 @@ public class Client {
         return Objects.hash(username, getRemoteAddress());
     }
 
-    // Utility method to extract the client's remote socket address.
     public String getRemoteAddress() {
         return socket != null && socket.getRemoteSocketAddress() != null
                 ? socket.getRemoteSocketAddress().toString() : "";
     }
 
-    // Useful for debugging and for display in UI components like ListView.
     @Override
     public String toString() {
         return username;

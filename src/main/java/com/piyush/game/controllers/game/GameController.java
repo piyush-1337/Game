@@ -2,9 +2,10 @@ package com.piyush.game.controllers.game;
 
 import com.piyush.game.GameTools.*;
 import com.piyush.game.drawing.DrawingTools;
-import com.piyush.game.drawing.WordBank;
 import com.piyush.game.network.client.ClientNetwork;
 import com.piyush.game.network.server.ServerNetwork;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,6 +24,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -32,7 +34,7 @@ public class GameController implements Initializable {
     @FXML
     private BorderPane borderPane;
     @FXML
-    private ListView<String> listView;
+    private ListView<Player> listView;
     @FXML
     private Canvas canvas;
     @FXML
@@ -104,7 +106,6 @@ public class GameController implements Initializable {
 
 
         /* **********************************ADDITIONAL CODE********************************************** */
-        clearButton.setOnAction(e -> {drawingTools.clearCanvas();});
 
         if(!iAmServer){
             timerLabel.setText("Waiting for server...");
@@ -113,50 +114,36 @@ public class GameController implements Initializable {
 
     public void sendMessage() {
 
-        if(!textField.getText().isBlank()) {
-
+        if (!textField.getText().isBlank()) {
             String word = textField.getText().trim();
+            textField.clear();
 
-            if(word.equalsIgnoreCase(wordToGuess)) {
-                //TODO: correctly guessed the word add points
+            GuessCommand guessCommand = new GuessCommand();
+            guessCommand.playerName = playerName;
+            guessCommand.guessedWord = word;
 
-
-
+            if (iAmServer) {
+                // Process the guess locally for the server's GameManager
+                Player serverPlayer = serverNetwork.getGameManager().getPlayers().getFirst();
+                serverNetwork.getGameManager().handleCommand(guessCommand, serverPlayer);
+            } else {
+                clientNetwork.sendCommandToServer(guessCommand);
             }
-
-            else {
-                //send the message to the chat box
-                String message = playerName + " - " + word;
-                addChat(message);
-                GuessCommand command = new GuessCommand();
-                command.guessedWord = WordBank.getRandomWord();
-                command.playerName = iAmServer ? serverNetwork.getPlayerName() : clientNetwork.getPlayerName();
-
-                if(iAmServer) {
-                    serverNetwork.sendToAll(command);
-                } else {
-                    clientNetwork.sendCommandToServer(command);
-                }
-            } //Still needs to update things
         }
     }
 
-    public void addChat(String message) {
+    public void addChat(String message, boolean isCorrect) {
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER_LEFT);
         hBox.setPadding(new Insets(5,5,5,10));
 
         Text text = new Text(message);
-        text.setFill(Color.BLACK);
         text.setFont(Font.font("Segoe UI", FontWeight.NORMAL, 14));
-        text.setSmooth(false);
+        text.setFill(Color.web("#2c3e50")); // Using existing dark text color
 
         TextFlow textFlow = new TextFlow(text);
-        textFlow.setStyle("-fx-color: rgb(239,242,255);" +
-                "-fx-background-color: rgb(15,125,242);" +
-                "-fx-background-radius: 20px;");
+        textFlow.getStyleClass().add(isCorrect ? "correct-message" : "incorrect-message");
         textFlow.setPadding(new Insets(5,10,5,10));
-        text.setFill(Color.color(0.934,0.945,0.996));
 
         Platform.runLater(() -> {
             hBox.getChildren().add(textFlow);
@@ -179,7 +166,12 @@ public class GameController implements Initializable {
                 drawCommand.startY = drawingTools.lastY;
                 drawCommand.endX = e.getX();
                 drawCommand.endY = e.getY();
-                serverNetwork.sendToAll(drawCommand);
+
+                if(iAmServer) {
+                    serverNetwork.sendToAll(drawCommand);
+                } else {
+                    clientNetwork.sendCommandToServer(drawCommand);
+                }
 
                 drawingTools.drawHistory.add(new DrawingTools.LineCommand(drawingTools.lastX, drawingTools.lastY, e.getX(), e.getY()));
                 drawingTools.lastX = e.getX();
@@ -189,16 +181,66 @@ public class GameController implements Initializable {
         });
 
         canvas.setOnMouseReleased(e -> drawing = false);
+
+        clearButton.setOnAction(e -> {
+            clearDrawing();
+
+            if(iAmServer) {
+                serverNetwork.sendToAll(new ClearDrawingCommand());
+            } else {
+                clientNetwork.sendCommandToServer(new ClearDrawingCommand());
+            }
+        });
+
+        clearButton.setDisable(false);
     }
 
     public void disableDrawing() {
         canvas.setOnMousePressed(null);
         canvas.setOnMouseDragged(null);
         canvas.setOnMouseReleased(null);
+
+        clearButton.setDisable(true);
     }
 
+    public void enableChat() {
+        textField.setDisable(false);
+        sendButton.setDisable(false);
+    }
+
+    public void disableChat() {
+        textField.setDisable(true);
+        sendButton.setDisable(true);
+    }
+
+    public void updateScore(String updateName, int score) {
+        for(Player p : scoreList) {
+            if(p.getPlayerName().equals(updateName)) {
+                p.setScore(p.getScore()+score);
+                break;
+            }
+        }
+        listView.refresh();
+    }
+
+    public void clearDrawing() {
+        drawingTools.clearCanvas();
+    }
+
+    private final Timeline labelAnimation = new Timeline(
+            new KeyFrame(Duration.ZERO, e -> {
+                label.getStyleClass().add("text-changed");
+            }),
+            new KeyFrame(Duration.millis(1500), e -> {
+                label.getStyleClass().remove("text-changed");
+            })
+    );
     public void setLabelText(String text) {
-        Platform.runLater(() -> label.setText(text));
+        Platform.runLater(() -> {
+            label.setText(text);
+            labelAnimation.stop();
+            labelAnimation.play();
+        });
     }
 
     public void processDrawCommand(DrawingTools.LineCommand line) {
@@ -239,8 +281,13 @@ public class GameController implements Initializable {
         return (Stage) sendButton.getScene().getWindow();
     }
 
+    public ObservableList<Player> getScoreList() {
+        return scoreList;
+    }
+
     public void setScoreList(ObservableList<Player> players){
         this.scoreList = players;
+        listView.setItems(scoreList);
     }
 
     public void setPlayerName(String name){

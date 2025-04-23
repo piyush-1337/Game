@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ServerNetwork {
 
@@ -48,10 +46,9 @@ public class ServerNetwork {
 
                     String broadcastMsg = "Broadcasting-" + username + "-" + gamePort;
                     byte[] buffer = broadcastMsg.getBytes();
-
-                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName("255.255.255.255"), broadcastPort);
+                    //calculate broadcast before using
+                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName("10.25.95.255"), broadcastPort);
                     socket.send(packet);
-                    System.out.println(broadcastMsg);
 
                     Thread.sleep(3000);
                 }
@@ -73,10 +70,8 @@ public class ServerNetwork {
                     try {
                         serverSocket = new ServerSocket(port);
                         this.gamePort = port; // update the gamePort with the available port
-                        System.out.println("TCP Server started on port: " + gamePort);
                         break; // successfully bound
                     } catch (BindException be) {
-                        System.out.println("Port " + port + " in use, trying next port...");
                         port++; // try next port
                     } catch (IOException ioe) {
                         ioe.printStackTrace();
@@ -101,7 +96,6 @@ public class ServerNetwork {
                     throw new RuntimeException(e);
                 }
             } finally {
-                // Ensure the ServerSocket is closed.
                 if (serverSocket != null && !serverSocket.isClosed()) {
                     try {
                         serverSocket.close();
@@ -132,30 +126,37 @@ public class ServerNetwork {
         }
     }
 
+    public void sentTo(GameCommand cmd, Player player) {
+        try {
+            PrintWriter out = new PrintWriter(player.getSocket().getOutputStream(), true);
+            String json = mapper.writeValueAsString(cmd);
+            out.println(json);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     public void sendToAllExcept(GameCommand command, Player excludedPlayer) {
         ObjectMapper mapper = new ObjectMapper();
-
+        String json = null;
+        try {
+            json = mapper.writeValueAsString(command);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         for (Client client : clientsList) {
             try {
-                // Find the player corresponding to this client
                 Player target = getPlayerBySocket(client.getSocket());
 
-                // Skip the excluded player
                 if (target == null || target.equals(excludedPlayer)) continue;
 
-                // Send the command
                 PrintWriter out = new PrintWriter(client.getSocket().getOutputStream(), true);
-                String json = mapper.writeValueAsString(command);
                 out.println(json);
 
             } catch (IOException e) {
                 System.err.println("Error sending to client " + client.getUsername() + ": " + e.getMessage());
             }
-        }
-
-        // Also check if the excluded player is not the server, and if host is playing, update local UI
-        if (!excludedPlayer.isServer()) {
-            // Optionally update GameController locally (if needed)
         }
     }
 
@@ -173,8 +174,6 @@ public class ServerNetwork {
                         GameCommand cmd = mapper.readValue(json,GameCommand.class);
                         gameManager.handleCommand(cmd,getPlayerBySocket(client.getSocket()));
 
-                        // Handle the message: deserialize JSON, pass to GameManager, etc.
-                        System.out.println("Received from " + client.getUsername() + ": " + json);
                     }
 
                 } catch (IOException e) {
@@ -185,9 +184,9 @@ public class ServerNetwork {
     }
 
     public void startGame() {
-        players.add(new Player("Host", true, null)); // true = server player
+        players.add(new Player(playerName, true, null));
         for (Client client : clientsList) {
-            players.add(new Player(client.getUsername(), false,client.getSocket())); // false = not server
+            players.add(new Player(client.getUsername(), false,client.getSocket()));
         }
 
         gameManager = new GameManager(players, this, gameController);

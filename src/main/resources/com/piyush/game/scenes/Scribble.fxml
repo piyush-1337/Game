@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane fx:id="borderPane" prefHeight="617.0" prefWidth="831.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.piyush.game.controllers.game.GameController">
-    <!-- Top: Static Label -->
     <top>
         <HBox>
             <Label fx:id="label" prefHeight="18.0" prefWidth="854.0" text="Scribble" BorderPane.alignment="CENTER_LEFT" />
@@ -19,12 +18,10 @@
         </HBox>
     </top>
 
-    <!-- Left: Fixed-width ListView -->
     <left>
         <ListView fx:id="listView" prefWidth="200.0" BorderPane.alignment="CENTER" />
     </left>
 
-    <!-- Bottom: Flexible HBox with resizable TextField -->
     <bottom>
         <HBox fx:id="hBox" BorderPane.alignment="CENTER">
             <children>
@@ -35,7 +32,6 @@
         </HBox>
     </bottom>
 
-    <!-- Right: Fixed-width ScrollPane -->
     <right>
         <ScrollPane fx:id="scrollPane" prefWidth="200.0" BorderPane.alignment="CENTER">
             <content>
@@ -44,7 +40,6 @@
         </ScrollPane>
     </right>
 
-    <!-- Center: Canvas that will resize dynamically -->
     <center>
         <Canvas fx:id="canvas" height="300.0" width="400.0" BorderPane.alignment="CENTER" />
     </center>

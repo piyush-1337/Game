@@ -1,0 +1,51 @@
+.root {
+    -fx-background-color: linear-gradient(to bottom right, #8AA2C9, #ACB6E5);
+    -fx-padding: 25px;
+}
+
+.label {
+    -fx-text-fill: #2c3e50;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-padding: 15px 0 25px 0;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.3), 10, 0.5, 0, 0);
+}
+
+.list-view {
+    -fx-background-color: rgba(255, 255, 255, 0.4);
+    -fx-background-radius: 10px;
+    -fx-border-color: rgba(174, 214, 241, 0.6);
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-padding: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 0);
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #34495e;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 16px;
+    -fx-padding: 10px;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: rgba(174, 214, 241, 0.3);
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: rgba(133, 193, 233, 0.4);
+    -fx-text-fill: #2c3e50;
+}
+
+@keyframes gentle-wave {
+    0% { -fx-translate-y: 0; }
+    50% { -fx-translate-y: -2px; }
+    100% { -fx-translate-y: 0; }
+}
+
+.label {
+    -fx-animation: gentle-wave 3s infinite;
+}

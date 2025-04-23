@@ -23,7 +23,6 @@ public class DrawingTools {
         void execute(GraphicsContext gc);
     }
 
-    // Example line command implementation
     public record LineCommand(double x1, double y1, double x2, double y2) implements Draw {
         @Override
         public void execute(GraphicsContext gc) {
@@ -35,13 +34,10 @@ public class DrawingTools {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         double width = canvas.getWidth();
         double height = canvas.getHeight();
-        // Clear the canvas
         gc.clearRect(0, 0, width, height);
-        // Fill with blue color
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, width, height);
 
-        // Redraw any existing drawing commands if needed
         for (Draw command : drawHistory) {
             command.execute(gc);
         }

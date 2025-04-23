@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 
@@ -22,6 +23,8 @@ public class JoinController implements Initializable {
 
     @FXML
     private ListView<Server> serversListView;
+    @FXML
+    private Button joinButton;
 
     public void setUsername(String username) {
         this.username = username;
@@ -35,6 +38,7 @@ public class JoinController implements Initializable {
                 joinServer();
             }
         });
+
     }
 
     @Override
@@ -47,8 +51,8 @@ public class JoinController implements Initializable {
         String serverName = clientNetwork.getDiscoveredServers().get(index).getUsername();
 
         try {
-            clientNetwork.setServer(index, serverName);
             clientNetwork.setPlayerName(username);
+            clientNetwork.setServer(index, serverName);
             clientNetwork.stopListeningToBroadcast();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/piyush/game/scenes/Scribble.fxml"));
@@ -58,6 +62,9 @@ public class JoinController implements Initializable {
             clientNetwork.startListeningFromServer();
             gameController.setClientNetwork(clientNetwork);
             gameController.setPlayerName(username);
+
+            gameController.disableDrawing();
+            gameController.enableChat();
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/com/piyush/game/styles/ScribbleStyles.css").toExternalForm());

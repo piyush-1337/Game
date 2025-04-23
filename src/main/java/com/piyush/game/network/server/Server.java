@@ -11,7 +11,6 @@ public class Server {
     private String username;
     private final int gamePort;
 
-    // Constructor for discovery (socket is null)
     public Server(InetAddress ip, String username, int gamePort) {
         this.socket = null;
         this.ip = ip;
@@ -50,7 +49,6 @@ public class Server {
         this.username = username;
     }
 
-    // Override equals() to compare based on username and ip
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -65,7 +63,6 @@ public class Server {
         return Objects.hash(username, ip);
     }
 
-    // Useful for display in UI components like ListView.
     @Override
     public String toString() {
         return username + " (" + (ip != null ? ip.getHostAddress() : "unknown") + ")";

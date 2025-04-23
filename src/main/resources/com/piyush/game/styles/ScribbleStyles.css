@@ -1,89 +1,225 @@
-/* CSS file for the game UI */
-
-/* Overall background for the main pane */
 #borderPane {
-    -fx-background-color: linear-gradient(to bottom, #2c3e50, #bdc3c7);
+    -fx-background-color: linear-gradient(to bottom right, #74ebd5, #ACB6E5);
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
 }
 
-/* Top Label styling */
+.border-pane > .top {
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-background-radius: 10px 10px 0 0;
+    -fx-padding: 12px;
+}
+
 #label {
-    -fx-font-size: 24px;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 28px;
     -fx-font-weight: bold;
-    -fx-text-fill: #ffffff;
-    -fx-padding: 10px;
-    -fx-alignment: center;
+    -fx-text-fill: #2c3e50;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 5, 0.3, 0, 0);
+    -fx-padding: 5px 10px;
+}
+
+#label.text-changed {
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.9), 15, 0.5, 0, 0);
+    -fx-text-fill: #34495e;
 }
 
 #timerLabel {
-    -fx-font-size: 24px;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 26px;
     -fx-font-weight: bold;
-    -fx-text-fill: #ffffff;
-    -fx-padding: 10px;
-    -fx-alignment: center;
+    -fx-text-fill: #34495e;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 5, 0.3, 0, 0);
+    -fx-background-color: rgba(255, 255, 255, 0.5);
+    -fx-background-radius: 15px;
+    -fx-padding: 6px 15px;
 }
 
-/* Left ListView styling */
 #listView {
-    -fx-background-color: #ecf0f1;
-    -fx-border-color: #95a5a6;
-}
-
-/* Bottom HBox container styling */
-#hBox {
-    -fx-background-color: #34495e;
-    -fx-padding: 10px;
-}
-
-/* TextField styling */
-#textField {
-    -fx-background-color: #ffffff;
-    -fx-text-fill: #2c3e50;
-    -fx-font-size: 14px;
-    -fx-border-radius: 4px;
-    -fx-background-radius: 4px;
+    -fx-background-color: rgba(255, 255, 255, 0.6);
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(255, 255, 255, 0.8);
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
     -fx-padding: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 0);
 }
 
-/* Send Button styling */
-#sendButton {
-    -fx-background-color: #e74c3c;
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 14px;
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #34495e;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-padding: 8px 16px;
-    -fx-border-radius: 4px;
-    -fx-background-radius: 4px;
+    -fx-padding: 10px;
+    -fx-border-color: transparent transparent rgba(0, 0, 0, 0.05) transparent;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.5);
+    -fx-background-radius: 5px;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: rgba(174, 214, 241, 0.7);
+    -fx-background-radius: 5px;
+    -fx-text-fill: #2c3e50;
+}
+
+#hBox {
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-background-radius: 0 0 10px 10px;
+    -fx-padding: 15px;
+    -fx-spacing: 10px;
+}
+
+#textField {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 16px;
+    -fx-font-weight: normal;
+    -fx-border-color: rgba(174, 214, 241, 0.8);
+    -fx-border-width: 2px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-padding: 10px 15px;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);
+}
+
+#textField:focused {
+    -fx-border-color: #85C1E9;
+    -fx-effect: dropshadow(gaussian, #85C1E9, 5, 0.3, 0, 0);
+}
+
+#sendButton, #clearButton {
+    -fx-background-color: linear-gradient(to bottom, #85C1E9, #5DADE2);
+    -fx-text-fill: white;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-padding: 10px 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);
     -fx-cursor: hand;
+}
+
+#sendButton:hover, #clearButton:hover {
+    -fx-background-color: linear-gradient(to bottom, #AED6F1, #85C1E9);
+    -fx-effect: dropshadow(gaussian, rgba(133,193,233,0.5), 8, 0.4, 0, 0);
+    -fx-translate-y: -1px;
+}
+
+#sendButton:pressed, #clearButton:pressed {
+    -fx-background-color: linear-gradient(to bottom, #5DADE2, #3498DB);
+    -fx-translate-y: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 1, 0, 0, 0);
 }
 
 #clearButton {
-    -fx-background-color: #e74c3c;
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-padding: 8px 16px;
-    -fx-border-radius: 4px;
-    -fx-background-radius: 4px;
-    -fx-cursor: hand;
+    -fx-background-color: linear-gradient(to bottom, #D4E6F1, #A9CCE3);
+    -fx-text-fill: #2C3E50;
 }
 
-#sendButton:hover {
-    -fx-background-color: #c0392b;
+#clearButton:hover {
+    -fx-background-color: linear-gradient(to bottom, #E8F6F3, #D4E6F1);
+    -fx-effect: dropshadow(gaussian, rgba(212,230,241,0.5), 8, 0.4, 0, 0);
 }
 
-/* Right ScrollPane styling */
+#clearButton:pressed {
+    -fx-background-color: linear-gradient(to bottom, #A9CCE3, #7FB3D5);
+}
+
 #scrollPane {
-    -fx-background: #ecf0f1;
-    -fx-border-color: #95a5a6;
+    -fx-background: rgba(255, 255, 255, 0.6);
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(255, 255, 255, 0.8);
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-padding: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 0);
 }
 
-/* VBox inside the ScrollPane */
+#scrollPane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(133, 193, 233, 0.7);
+    -fx-background-radius: 5px;
+}
+
+.scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 5px;
+}
+
+.scroll-bar:vertical .increment-arrow,
+.scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: rgba(133, 193, 233, 0.9);
+}
+
 #vBox {
     -fx-padding: 10px;
+    -fx-spacing: 8px;
 }
 
-/* Canvas styling */
-/* Note: Canvas styling via CSS is limited, so consider handling canvas drawing in code */
 #canvas {
-    -fx-background-color: #ffffff;
+    -fx-background-color: white;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.1), 5, 0.2, 0, 0);
+    -fx-background-radius: 10px;
+    -fx-border-color: rgba(255, 255, 255, 0.8);
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
 }
+
+.chat-bubble {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-background-radius: 18px;
+    -fx-padding: 10px 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);
+}
+
+.my-message {
+    -fx-background-color: rgba(213, 245, 227, 0.9);
+    -fx-background-radius: 18px;
+    -fx-padding: 10px 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);
+}
+
+.system-message {
+    -fx-font-style: italic;
+    -fx-text-fill: #2980B9;
+    -fx-font-size: 14px;
+}
+
+@keyframes correct-answer {
+    0% { -fx-background-color: transparent; }
+    50% { -fx-background-color: rgba(130, 224, 170, 0.3); }
+    100% { -fx-background-color: transparent; }
+}
+
+.correct-answer {
+    -fx-animation: correct-answer 2s infinite;
+}
+
+.correct-message {
+    -fx-background-color: rgba(173, 247, 182, 0.9);
+    -fx-background-radius: 18px;
+    -fx-padding: 10px 15px;
+    -fx-effect: dropshadow(gaussian, rgba(46, 204, 113, 0.2), 5, 0.2, 0, 1);
+    -fx-text-fill: #2c3e50;
+}
+
+.incorrect-message {
+    -fx-background-color: rgba(255, 218, 218, 0.9);
+    -fx-background-radius: 18px;
+    -fx-padding: 10px 15px;
+    -fx-effect: dropshadow(gaussian, rgba(231, 76, 60, 0.1), 3, 0.1, 0, 1);
+    -fx-text-fill: #2c3e50;
+}
+

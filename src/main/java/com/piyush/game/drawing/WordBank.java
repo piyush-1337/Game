@@ -30,7 +30,6 @@ public class WordBank {
 
         } catch (IOException | NullPointerException e) {
             System.err.println("Error loading words, using fallback list");
-            // Fallback words
             words.addAll(List.of("Apple", "Elephant", "Mountain", "Bicycle", "Pizza"));
         }
     }

@@ -41,6 +41,7 @@ public class LoginController {
 
             Stage stage = (Stage) username.getScene().getWindow();
             stage.setScene(new Scene(root));
+
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");

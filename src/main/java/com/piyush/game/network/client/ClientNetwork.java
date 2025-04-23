@@ -3,6 +3,7 @@ package com.piyush.game.network.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.piyush.game.GameTools.*;
 import com.piyush.game.controllers.game.GameController;
+import com.piyush.game.controllers.game.GameOverController;
 import com.piyush.game.drawing.DrawingTools;
 import com.piyush.game.network.server.Server;
 import javafx.animation.KeyFrame;
@@ -12,6 +13,10 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.BufferedReader;
@@ -20,6 +25,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class ClientNetwork {
@@ -34,10 +40,12 @@ public class ClientNetwork {
 
     private GameController gameController;
 
+    private boolean gameOver = false;
+
     public void startListeningForBroadcast() {
         new Thread(() -> {
 
-            try(DatagramSocket socket = new DatagramSocket(broadcastPort)) {
+            try(DatagramSocket socket = new DatagramSocket(broadcastPort, InetAddress.getByName("0.0.0.0"))) {
                 socket.setSoTimeout(5000);
                 byte[] buffer = new byte[1024];
 
@@ -76,11 +84,9 @@ public class ClientNetwork {
                 );
                 ObjectMapper mapper = new ObjectMapper();
                 String json;
-                while ((json = reader.readLine()) != null) {
-
+                while ((json = reader.readLine()) != null && !gameOver) {
                     GameCommand command = mapper.readValue(json, GameCommand.class);
                     handleCommand(command);
-
                 }
 
             } catch (IOException e) {
@@ -94,10 +100,8 @@ public class ClientNetwork {
 
         switch (command) {
             case GuessCommand guess -> {
-                /* check word, update score */
 
-                gameController.addChat(guess.playerName + "-" + guess.guessedWord);
-
+                gameController.addChat(guess.playerName + ": " + guess.guessedWord, false);
             }
             case DrawCommand dc -> {
                 DrawingTools.LineCommand line =
@@ -110,7 +114,8 @@ public class ClientNetwork {
             }
 
             case UpdateScoreCommand updateScore -> {
-
+                gameController.addChat(updateScore.playerName + " GUESSED CORRECTLY!", true);
+                Platform.runLater(() -> gameController.updateScore(updateScore.playerName, updateScore.score));
             }
 
             case PlayerListCommand playerListCommand -> {
@@ -121,42 +126,89 @@ public class ClientNetwork {
                 startGame();
             }
 
+            case ClearDrawingCommand clearDrawingCommand -> {
+                gameController.clearDrawing();
+            }
+
+            case YourTurnCommand yourTurnCommand -> {
+                gameController.setWordToGuess(yourTurnCommand.wordToGuess);
+                gameController.setLabelText("Word: " + gameController.getWordToGuess());
+                gameController.disableChat();
+                gameController.enableDrawing();
+
+                Platform.runLater(this::startTurnTimer);;
+            }
+
+            case NextTurnCommand nextTurnCommand -> {
+                gameController.setWordToGuess(nextTurnCommand.wordToGuess);
+                gameController.setLabelText(nextTurnCommand.playerName + " is Drawing");
+                gameController.disableDrawing();
+                gameController.enableChat();
+
+                Platform.runLater(this::startTurnTimer);
+            }
+
+            case GameOverCommand gameOverCommand -> {
+                Stage stage = gameController.getStage();
+                try{
+                    Thread.sleep(100);
+
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/piyush/game/scenes/GameOver.fxml"));
+                    Parent root = loader.load();
+                    GameOverController gameOverController = loader.getController();
+                    gameOverController.setFinalScores(gameController.getScoreList());
+                    Scene scene = new Scene(root);
+                    scene.getStylesheets().add(getClass().getResource("/com/piyush/game/styles/GameOverStyles.css").toExternalForm());
+                    Platform.runLater(()->stage.setScene(scene));
+                    stopGame();
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
             default -> throw new IllegalStateException("Unexpected value: " + command);
         }
 
     }
 
     //Game logic from here
-
     IntegerProperty timeLeft = new SimpleIntegerProperty(60);
     Timeline timer;
 
     public void startGame() {
 
-        gameController.setLabelText(server.getUsername() + " is drawing");
+        gameController.setLabelText(server.getUsername() + " is Drawing");
 
         Platform.runLater(() -> gameController.getTimerLabel().textProperty().bind(timeLeft.asString()));
         startTurnTimer();
 
+
+        //this is not related but couldn't find a spot to put this so here it is
+        Stage stage = gameController.getStage();
+        stage.setOnCloseRequest(event -> {
+            stopListeningToBroadcast();
+            stage.close();
+        });
+
     }
 
     public void startTurnTimer() {
-        // reset
         timeLeft.set(60);
 
-        // if an old timer is running, stop it
         if (timer != null) {
             timer.stop();
         }
 
-        // every 1 second, decrement timeLeft by 1
         timer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             timeLeft.set(timeLeft.get() - 1);
             if (timeLeft.get() <= 0) {
                 timer.stop();
             }
         }));
-        timer.setCycleCount(60);  // run 60 times
+        timer.setCycleCount(60);
         timer.play();
     }
 
@@ -168,7 +220,7 @@ public class ClientNetwork {
 
         //This username will be added to the listview of Host
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        out.println(username);
+        out.println(playerName);
     }
 
     public void sendCommandToServer(GameCommand command) {
@@ -204,6 +256,10 @@ public class ClientNetwork {
 
     public void stopListeningToBroadcast() {
         listening = false;
+    }
+
+    public void stopGame() {
+        gameOver = true;
     }
 
 }
