@@ -18,7 +18,7 @@ A JavaFX-based multiplayer game inspired by Skribbl.io, where one player draws a
 - **Java**: Version 23 or higher (Tested on Java 23.0.1)
 - **Maven**: For managing JavaFX and Jackson dependencies
 - **JavaFX SDK**: Used by the application (automatically handled by Maven if using IntelliJ)
-- **Jackson**: For serializing/deserializing commands (via Gson-compatible APIs)
+- **Jackson**: For serializing/deserializing commands
 
 ---
 
