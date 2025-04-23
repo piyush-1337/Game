@@ -47,7 +47,7 @@ public class ServerNetwork {
                     String broadcastMsg = "Broadcasting-" + username + "-" + gamePort;
                     byte[] buffer = broadcastMsg.getBytes();
                     //calculate broadcast before using
-                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName("10.25.95.255"), broadcastPort);
+                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName("255.255.255.255"), broadcastPort);
                     socket.send(packet);
 
                     Thread.sleep(3000);
