@@ -1,6 +1,6 @@
 # Multiplayer Drawing & Guessing Game 🎨🕵️
 
-A JavaFX-based multiplayer game inspired by Skribbl.io, where one player draws a word and others try to guess it in real time. Designed with a client-server architecture, the game uses JavaFX for GUI, multithreading for handling concurrent players, and Gson (via Jackson) for JSON communication.
+A JavaFX-based multiplayer game inspired by Skribbl.io, where one player draws a word and others try to guess it in real time. Designed with a client-server architecture, the game uses JavaFX for GUI, multithreading for handling concurrent players, and Jackson for JSON communication.
 
 ---
 
