@@ -151,7 +151,6 @@ public class GameManager {
     }
 
     private void onTimerExpired() {
-        players.get(turn).setisDrawing(false);
         turn++;
         if(turn == players.size()) {
             new Thread(()->{
