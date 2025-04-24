@@ -19,7 +19,7 @@ A JavaFX-based multiplayer game inspired by Skribbl.io, where one player draws a
 - **Maven**: For managing JavaFX and Jackson dependencies
 - **JavaFX SDK**: Used by the application (automatically handled by Maven if using IntelliJ)
 - **Jackson**: For serializing/deserializing commands
-
+- **OS**: Linux(Recommended), Windows(Need to enable broacasting on server and allow udp/tcp ports on client)
 ---
 
 ## 🚀 How to Run the Project
