@@ -4,7 +4,7 @@
 - [Multiplayer Drawing & Guessing Game 🎨🕵️](#multiplayer-drawing-guessing-game-🎨🕵️)
   - [🛠 Features](#🛠-features)
   - [⚙️ Requirements](#️-requirements)
-  - [🚀 How to Run the Project](#🚀-how-to-run-the-project)
+  - [🚀 How to Run the Project](#-how-to-run-the-project)
     - [Option 1: Using IntelliJ IDEA](#option-1-using-intellij-idea)
     - [Option 2: Using Command Line (Manual Setup)](#option-2-using-command-line-manual-setup)
 <!--toc:end-->
