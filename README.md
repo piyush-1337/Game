@@ -65,6 +65,11 @@ A JavaFX-based multiplayer game inspired by Skribbl.io, where one player draws a
 
    ```bash
    git clone https://github.com/piyush-1337/Game
+   ```
+
+3. **Run the Game**
+
+   ```bash
    cd Game
    mvn clean javafx:run
    ```
