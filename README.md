@@ -5,7 +5,7 @@
   - [🛠 Features](#🛠-features)
   - [⚙️ Requirements](#️-requirements)
   - [🚀 How to Run the Project](#🚀-how-to-run-the-project)
-    - [Option 1: Using IntelliJ IDEA (Recommended)](#option-1-using-intellij-idea-recommended)
+    - [Option 1: Using IntelliJ IDEA](#option-1-using-intellij-idea-recommended)
     - [Option 2: Using Command Line (Manual Setup)](#option-2-using-command-line-manual-setup)
 <!--toc:end-->
 
@@ -34,7 +34,7 @@ A JavaFX-based multiplayer game inspired by Skribbl.io, where one player draws a
 
 ## 🚀 How to Run the Project
 
-### Option 1: Using IntelliJ IDEA (Recommended)
+### Option 1: Using IntelliJ IDEA
 
 1. **Clone the Repository**  
 
