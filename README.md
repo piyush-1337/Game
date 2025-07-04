@@ -1,5 +1,14 @@
 # Multiplayer Drawing & Guessing Game 🎨🕵️
 
+<!--toc:start-->
+- [Multiplayer Drawing & Guessing Game 🎨🕵️](#multiplayer-drawing-guessing-game-🎨🕵️)
+  - [🛠 Features](#🛠-features)
+  - [⚙️ Requirements](#️-requirements)
+  - [🚀 How to Run the Project](#🚀-how-to-run-the-project)
+    - [Option 1: Using IntelliJ IDEA (Recommended)](#option-1-using-intellij-idea-recommended)
+    - [Option 2: Using Command Line (Manual Setup)](#option-2-using-command-line-manual-setup)
+<!--toc:end-->
+
 A JavaFX-based multiplayer game inspired by Skribbl.io, where one player draws a word and others try to guess it in real time. Designed with a client-server architecture, the game uses JavaFX for GUI, multithreading for handling concurrent players, and Jackson for JSON communication.
 
 ---
@@ -20,6 +29,7 @@ A JavaFX-based multiplayer game inspired by Skribbl.io, where one player draws a
 - **JavaFX SDK**: Used by the application (automatically handled by Maven if using IntelliJ)
 - **Jackson**: For serializing/deserializing commands
 - **OS**: Linux(Recommended), Windows(Need to enable broacasting on server and allow udp/tcp ports on client)
+
 ---
 
 ## 🚀 How to Run the Project
@@ -29,9 +39,11 @@ A JavaFX-based multiplayer game inspired by Skribbl.io, where one player draws a
 1. **Clone the Repository**  
 
 2. **Open in IntelliJ IDEA**  
+
 - IntelliJ will automatically detect the Maven project and download dependencies.
 
 3. **Run the Game**  
+
 - Launch `Main.java`
 - Run one instance as **host/server**, others as **clients**
 
@@ -41,18 +53,18 @@ A JavaFX-based multiplayer game inspired by Skribbl.io, where one player draws a
 
 ### Option 2: Using Command Line (Manual Setup)
 
-1. **Download JavaFX SDK**  
-- [https://openjfx.io](https://openjfx.io)
-- Extract it and note the path to the `lib` folder.
+1. **Install Maven**  
+   - [Download Maven](https://maven.apache.org/download.cgi) and follow the installation instructions.  
+   - Verify installation by running:  
 
-2. **Download Dependencies**  
-- Download `jackson-core` and `jackson-databind` from [https://mvnrepository.com](https://mvnrepository.com)
-- Place the `.jar` files in a `libs/` folder.
+     ```bash
+     mvn -v
+     ```
 
-3. **Compile and Run**
-```bash
-javac --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls,javafx.fxml \
-      -cp ".:libs/*" -d out $(find src -name "*.java")
+2. **Clone the Repository**
 
-java --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls,javafx.fxml \
-     -cp "out:libs/*" main.Main
+   ```bash
+   git clone https://github.com/piyush-1337/Game
+   cd Game
+   mvn clean javafx:run
+   ```
